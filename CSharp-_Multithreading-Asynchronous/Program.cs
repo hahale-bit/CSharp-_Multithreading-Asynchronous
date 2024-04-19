@@ -1,18 +1,62 @@
-﻿
-
-
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Net;
 
 namespace CSharp__Multithreading_Asynchronous
 {
+    internal class DoSomething
+    {
+        //创建一个计时器
+        Stopwatch sw = new Stopwatch();
+
+        //调用异步方法的方法叫调用方法 calling method
+        public void DoRun()
+        {
+            const int LargeNumber = 6_000_000;
+            sw.Start();
+            Task<int> t1 = CountCharacters(1, "http://www.microsoft.com");
+            Task<int> t2 = CountCharacters(2, "http://illustratedcsharp.com");
+            CountNumber(1, LargeNumber);
+            CountNumber(2, LargeNumber);
+            CountNumber(3, LargeNumber);
+            CountNumber(4, LargeNumber);
+            Console.WriteLine($"Characters of     http://www.microsoft.com:{t1.Result}");
+            Console.WriteLine($"Characters of http://illustratedcsharp.com:{t2.Result}");
+        }
+        //这是一个异步方法，async method
+        private async Task<int> CountCharacters(int id,string uristring)
+        {
+            WebClient wc1 = new WebClient();
+            Console.WriteLine("Starting call {0}:{1}ms", id, sw.Elapsed.TotalMilliseconds);
+            //下面这个就是一个异步的方法
+            string result = await wc1.DownloadStringTaskAsync(new Uri(uristring));
+            Console.WriteLine("Call {0} completed:{1}ms", id, sw.Elapsed.TotalMilliseconds);
+            return result.Length;
+        }
+
+        private void CountNumber(int id,int number)
+        {
+            for (int i = 0; i < number; i++) { };
+            Console.WriteLine("Counting {0} : {1}", id, sw.Elapsed.TotalMilliseconds);
+        }
+
+    }
+
     internal class Program
     {
-        //8.Is Asynchronous == Multithreading?
+
+        //9.FromBook（PART1）
         public static void Main(string[] args)
         {
-           /* TaskTest();
-            ThreadTest();*/
+            DoSomething doSomething = new DoSomething();
+            doSomething.DoRun();
+        }
+
+      
+        //8.Is Asynchronous == Multithreading?
+        /*public static void Main(string[] args)
+        {
+           *//* TaskTest();
+            ThreadTest();*//*
            DoSomething();
         }
 
@@ -45,7 +89,7 @@ namespace CSharp__Multithreading_Asynchronous
             }
             sw.Stop();
             Console.WriteLine($"Thread {sw.ElapsedMilliseconds}");
-        }
+        }*/
         //7.C#的异步怎么写
         /*public async Task<int> Method1()
         {
