@@ -3,6 +3,7 @@ using System.Net;
 
 namespace CSharp__Multithreading_Asynchronous
 {
+    //
     internal class DoSomething
     {
         //创建一个计时器
@@ -27,7 +28,7 @@ namespace CSharp__Multithreading_Asynchronous
         {
             WebClient wc1 = new WebClient();
             Console.WriteLine("Starting call {0}:{1}ms", id, sw.Elapsed.TotalMilliseconds);
-            //下面这个就是一个异步的方法
+            //下面这个就是一个异步的方法/操作，返回的result就是一个string
             string result = await wc1.DownloadStringTaskAsync(new Uri(uristring));
             Console.WriteLine("Call {0} completed:{1}ms", id, sw.Elapsed.TotalMilliseconds);
             return result.Length;
